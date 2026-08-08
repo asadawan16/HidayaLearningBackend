@@ -18,11 +18,15 @@ module.exports = {
   },
 
   // Cache-aside helper: return cached value or produce + store it.
+  // Never caches empty/absent payloads — otherwise content seeded out-of-band
+  // (e.g. an import run after the server started) stays hidden until the TTL
+  // lapses. Empty lists are cheap to recompute.
   async wrap(key, ttl, producer) {
     const hit = cache.get(key);
     if (hit !== undefined) return hit;
     const val = await producer();
-    if (val !== undefined && val !== null) cache.set(key, val, ttl ? { ttl } : undefined);
+    const cacheable = val !== undefined && val !== null && !(Array.isArray(val) && val.length === 0);
+    if (cacheable) cache.set(key, val, ttl ? { ttl } : undefined);
     return val;
   },
 };

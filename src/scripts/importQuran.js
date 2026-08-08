@@ -18,7 +18,7 @@ const { connectDatabase } = require('../config/database');
 const { Surah, Ayah, Word } = require('../models');
 
 const API = 'https://api.quran.com/api/v4';
-const TRANSLATION_ID = Number(process.env.QURAN_TRANSLATION_ID || 131); // 131 = Saheeh Intl (en)
+const TRANSLATION_ID = Number(process.env.QURAN_TRANSLATION_ID || 20); // 20 = Saheeh International (en)
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 async function getJSON(url) {
@@ -83,7 +83,11 @@ async function importChapterVerses(chapter) {
             translations: (v.translations || []).map((t) => ({
               lang: 'en',
               source: String(t.resource_id),
-              text: String(t.text).replace(/<[^>]*>/g, '').trim(),
+              // Drop footnote markers (<sup>…</sup>) entirely, then any other tags.
+              text: String(t.text)
+                .replace(/<sup[^>]*>.*?<\/sup>/gis, '')
+                .replace(/<[^>]*>/g, '')
+                .trim(),
             })),
           },
           $inc: { contentVersion: 1 },

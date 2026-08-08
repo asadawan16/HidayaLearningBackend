@@ -11,4 +11,5 @@ module.exports = {
   Dua: require('./Dua'),
   Session: require('./Session'),
   GameSession: require('./GameSession'),
+  RewardGrant: require('./RewardGrant'),
 };

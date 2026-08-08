@@ -1,4 +1,5 @@
 const rooms = require('../roomManager');
+const { Session } = require('../../models');
 
 const room = (code) => `session:${code}`;
 const isStudent = (socket) => socket.data.role === 'student';
@@ -16,13 +17,26 @@ module.exports = function registerSessionHandlers(io, socket) {
     return ack?.({ ok: true });
   });
 
-  // Student joins with the shared code.
-  socket.on('session:join', ({ code } = {}, ack) => {
+  // Student joins with the shared code. The student's disposable token (from the
+  // handshake) is validated against the DB session so a guessed code alone can't
+  // join — the private link carries the matching token.
+  socket.on('session:join', async ({ code } = {}, ack) => {
     const r = rooms.get(code);
     if (!r) return ack?.({ ok: false, error: 'not_found' });
     if (rooms.isExpired(r)) {
       rooms.destroy(code);
       return ack?.({ ok: false, error: 'expired' });
+    }
+    try {
+      const s = await Session.findOne({ code }).lean();
+      if (!s || s.status !== 'active' || (s.expiresAt && Date.now() > new Date(s.expiresAt).getTime())) {
+        return ack?.({ ok: false, error: 'expired' });
+      }
+      if (s.studentToken && socket.data.studentToken !== s.studentToken) {
+        return ack?.({ ok: false, error: 'unauthorized' });
+      }
+    } catch (e) {
+      return ack?.({ ok: false, error: 'server_error' });
     }
     socket.join(room(code));
     rooms.addStudent(code, socket.id);
@@ -42,6 +56,7 @@ module.exports = function registerSessionHandlers(io, socket) {
     'session:font',
     'session:tajweed',
     'session:context',
+    'session:feedback',
   ];
   MIRROR_EVENTS.forEach((event) => {
     socket.on(event, (payload) => {

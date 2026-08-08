@@ -6,6 +6,8 @@ const auth = require('./modules/auth/auth.routes');
 const content = require('./modules/content/content.routes');
 const academy = require('./modules/academy/academy.routes');
 const admin = require('./modules/admin/admin.routes');
+const sessions = require('./modules/sessions/sessions.routes');
+const playground = require('./modules/playground/playground.routes');
 
 const router = Router();
 
@@ -14,8 +16,7 @@ router.use('/auth', auth);
 router.use('/content', publicLimiter, content); // public, cached learning content
 router.use('/academies', academy);
 router.use('/admin', admin); // admin content editing (auth enforced inside)
-
-// Phase 2+: router.use('/sessions', sessions)
-// Phase 4:  router.use('/playground', playground)
+router.use('/sessions', sessions); // Phase 2: live teaching session lifecycle
+router.use('/playground', playground); // Phase 4: reward grants for solo games
 
 module.exports = router;
