@@ -12,6 +12,20 @@ const surah = asyncHandler(async (req, res) => {
   res.json({ success: true, data });
 });
 
+const juzList = asyncHandler(async (req, res) => {
+  res.json({ success: true, data: await service.listJuz() });
+});
+
+const juz = asyncHandler(async (req, res) => {
+  const number = Number(req.params.number);
+  if (!Number.isInteger(number) || number < 1 || number > 30) {
+    throw ApiError.badRequest('Juz must be a number between 1 and 30');
+  }
+  const data = await service.getJuz(number);
+  if (!data) throw ApiError.notFound('Juz not found');
+  res.json({ success: true, data });
+});
+
 const qaidaLessons = asyncHandler(async (req, res) => {
   res.json({ success: true, data: await service.listQaidaLessons() });
 });
@@ -26,4 +40,4 @@ const duas = asyncHandler(async (req, res) => {
   res.json({ success: true, data: await service.listDuas(req.query.category) });
 });
 
-module.exports = { surahs, surah, qaidaLessons, qaidaLesson, duas };
+module.exports = { surahs, surah, juzList, juz, qaidaLessons, qaidaLesson, duas };
