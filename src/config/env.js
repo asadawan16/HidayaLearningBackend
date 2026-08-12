@@ -39,6 +39,14 @@ const env = {
   MAIL_FROM: opt('MAIL_FROM', 'Hidaya Online <no-reply@hidaya.online>'),
 
   CONTENT_CACHE_TTL_MS: parseInt(opt('CONTENT_CACHE_TTL_MS', String(1000 * 60 * 60)), 10),
+
+  // Socket.IO transports, in preference order. WebSocket first — on long-polling
+  // every live-mirror packet costs an HTTP round trip. Hosts that block the WS
+  // upgrade (cPanel/LiteSpeed) should set SOCKET_TRANSPORTS=polling,websocket.
+  SOCKET_TRANSPORTS: opt('SOCKET_TRANSPORTS', 'websocket,polling')
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean),
 };
 
 module.exports = { env };

@@ -58,12 +58,23 @@ module.exports = function registerSessionHandlers(io, socket) {
     'session:context',
     'session:feedback',
   ];
+  // High-frequency, disposable events: only the newest one has any value. Sent
+  // volatile so that if a student's connection is momentarily backed up the
+  // packet is DROPPED rather than queued — a queue of stale pointer positions
+  // is exactly what makes a mirror feel laggy, because the student then plays
+  // back the tutor's past movements in slow motion instead of skipping to now.
+  const VOLATILE_EVENTS = new Set(['session:cursor', 'session:hover', 'session:scroll']);
+
   MIRROR_EVENTS.forEach((event) => {
     socket.on(event, (payload) => {
       const code = socket.data.sessionCode;
       if (!code || isStudent(socket)) return; // only the tutor drives the mirror
       if (event === 'session:context') rooms.setContext(code, payload);
-      socket.to(room(code)).emit(event, payload);
+      const target = socket.to(room(code));
+      // ...but a null cursor means "pointer left the stage" and must land, or
+      // the student is left with a pointer frozen mid-page.
+      if (VOLATILE_EVENTS.has(event) && payload) target.volatile.emit(event, payload);
+      else target.emit(event, payload);
     });
   });
 
