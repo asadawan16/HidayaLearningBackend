@@ -57,6 +57,7 @@ module.exports = function registerSessionHandlers(io, socket) {
     'session:tajweed',
     'session:context',
     'session:feedback',
+    'session:mood', // tutor's emotional read on the lesson — mirrors to the student
   ];
   // High-frequency, disposable events: only the newest one has any value. Sent
   // volatile so that if a student's connection is momentarily backed up the
