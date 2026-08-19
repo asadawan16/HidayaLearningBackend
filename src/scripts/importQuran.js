@@ -56,10 +56,15 @@ async function importChapterVerses(chapter) {
   let totalVerses = 0;
 
   for (;;) {
+    // text_indopak is imported alongside text_uthmani so the reader can switch
+    // spelling without a second round trip. They are genuinely different
+    // strings, not a rendering of one another: Uthmani writes ذَٰلِكَ with a zabar
+    // stacked under the khari zabar, IndoPak writes ذٰلِكَ with the khari zabar
+    // alone. See lib/arabic/script.js on the frontend.
     const url =
       `${API}/verses/by_chapter/${n}` +
-      `?words=true&fields=text_uthmani,juz_number,hizb_number,page_number,ruku_number,sajdah_number` +
-      `&word_fields=text_uthmani,transliteration,translation` +
+      `?words=true&fields=text_uthmani,text_indopak,juz_number,hizb_number,page_number,ruku_number,sajdah_number` +
+      `&word_fields=text_uthmani,text_indopak,transliteration,translation` +
       `&translations=${TRANSLATION_ID}&per_page=50&page=${page}`;
     const data = await getJSON(url);
     const verses = data.verses || [];
@@ -79,6 +84,7 @@ async function importChapterVerses(chapter) {
             page: v.page_number,
             ruku: v.ruku_number,
             textUthmani: v.text_uthmani,
+            textIndopak: v.text_indopak || undefined,
             sajda: Boolean(v.sajdah_number),
             translations: (v.translations || []).map((t) => ({
               lang: 'en',
@@ -106,6 +112,7 @@ async function importChapterVerses(chapter) {
               ayah: ayahNumber,
               position: w.position,
               textUthmani: w.text_uthmani || w.text,
+              textIndopak: w.text_indopak || undefined,
               transliteration: w.transliteration?.text || undefined,
               translation: w.translation?.text || undefined,
             },

@@ -11,8 +11,10 @@
     "seed:admin": "node src/scripts/seedAdmin.js",
     "import:qaida": "node src/scripts/importQaida.js",
     "import:duas": "node src/scripts/importDuas.js",
+    "import:kalimas": "node src/scripts/importKalimas.js",
+    "import:namaz": "node src/scripts/importNamaz.js",
     "import:quran": "node src/scripts/importQuran.js",
-    "seed:content": "npm run import:qaida && npm run import:duas"
+    "seed:content": "npm run import:qaida && npm run import:duas && npm run import:kalimas && npm run import:namaz"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

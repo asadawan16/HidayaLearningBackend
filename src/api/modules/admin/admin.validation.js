@@ -74,4 +74,59 @@ const duaCreate = { body: duaBody.extend({ arabic: z.string().min(1) }) };
 const duaUpdate = { params: z.object({ id: z.string() }), body: duaBody };
 const duaDelete = { params: z.object({ id: z.string() }) };
 
-module.exports = { ayah, word, qaidaLesson, duaCreate, duaUpdate, duaDelete };
+const byId = z.object({ id: z.string() });
+
+const kalimaBody = z.object({
+  order: z.number().int().optional(),
+  slug: z.string().min(1).optional(),
+  name: z.object({ en: z.string().optional(), ur: z.string().optional(), ar: z.string().optional() }).optional(),
+  arabic: z.string().optional(),
+  transliteration: z.string().optional(),
+  translation: z.object({ en: z.string().optional(), ur: z.string().optional() }).optional(),
+  virtue: z.string().optional(),
+  reference: z.string().optional(),
+  audioUrl: z.string().url().optional(),
+});
+
+// slug + arabic are the two a Kalima cannot exist without: the slug is its
+// stable public URL and the Arabic is the content itself.
+const kalimaCreate = { body: kalimaBody.extend({ slug: z.string().min(1), arabic: z.string().min(1) }) };
+const kalimaUpdate = { params: byId, body: kalimaBody };
+const kalimaDelete = { params: byId };
+
+// Kept open rather than an enum: an admin adding a school-specific step (or a
+// new illustration) must not need a backend deploy. The frontend falls back to
+// a neutral figure for a pose it doesn't recognise.
+const POSE = z.string().min(1);
+
+const namazBody = z.object({
+  order: z.number().int().optional(),
+  slug: z.string().min(1).optional(),
+  name: z.object({ en: z.string().optional(), ur: z.string().optional(), ar: z.string().optional() }).optional(),
+  pose: POSE.optional(),
+  arabic: z.string().optional(),
+  transliteration: z.string().optional(),
+  translation: z.object({ en: z.string().optional(), ur: z.string().optional() }).optional(),
+  note: z.string().optional(),
+  repetitions: z.number().int().min(1).max(99).optional(),
+  optional: z.boolean().optional(),
+});
+
+const namazCreate = { body: namazBody.extend({ slug: z.string().min(1), pose: POSE }) };
+const namazUpdate = { params: byId, body: namazBody };
+const namazDelete = { params: byId };
+
+module.exports = {
+  ayah,
+  word,
+  qaidaLesson,
+  duaCreate,
+  duaUpdate,
+  duaDelete,
+  kalimaCreate,
+  kalimaUpdate,
+  kalimaDelete,
+  namazCreate,
+  namazUpdate,
+  namazDelete,
+};

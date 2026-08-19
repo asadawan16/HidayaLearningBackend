@@ -1,7 +1,7 @@
 const ApiError = require('../../../utils/ApiError');
 const pick = require('../../../utils/pick');
 const cache = require('../../../services/cache.service');
-const { Ayah, Word, QaidaLesson, QaidaPage, Dua } = require('../../../models');
+const { Ayah, Word, QaidaLesson, QaidaPage, Dua, Kalima, NamazStep } = require('../../../models');
 
 // Every edit bumps the item's contentVersion and evicts the relevant cache prefix,
 // so the public API and clients pick up the correction immediately.
@@ -87,6 +87,68 @@ async function deleteDua(id) {
   return { success: true };
 }
 
+// ---- Kalimas ----
+// Same shape as the Dua CRUD above (create/patch/delete, bump contentVersion,
+// evict the prefix) — the client asked to be able to *add* Kalimas, not just
+// correct the six, so this is full CRUD rather than edit-only.
+const KALIMA_FIELDS = [
+  'order', 'slug', 'name', 'arabic', 'transliteration', 'translation', 'virtue', 'reference', 'audioUrl',
+];
+
+async function createKalima(payload) {
+  const kalima = await Kalima.create(payload);
+  cache.clearPrefix('kalima:');
+  return kalima;
+}
+
+async function updateKalima(id, patch) {
+  const kalima = await Kalima.findByIdAndUpdate(
+    id,
+    { $set: pick(patch, KALIMA_FIELDS), $inc: { contentVersion: 1 } },
+    { new: true },
+  );
+  if (!kalima) throw ApiError.notFound('Kalima not found');
+  cache.clearPrefix('kalima:');
+  return kalima;
+}
+
+async function deleteKalima(id) {
+  const kalima = await Kalima.findByIdAndDelete(id);
+  if (!kalima) throw ApiError.notFound('Kalima not found');
+  cache.clearPrefix('kalima:');
+  return { success: true };
+}
+
+// ---- Namaz steps ----
+const NAMAZ_FIELDS = [
+  'order', 'slug', 'name', 'pose', 'arabic', 'transliteration', 'translation', 'note',
+  'repetitions', 'optional',
+];
+
+async function createNamazStep(payload) {
+  const step = await NamazStep.create(payload);
+  cache.clearPrefix('namaz:');
+  return step;
+}
+
+async function updateNamazStep(id, patch) {
+  const step = await NamazStep.findByIdAndUpdate(
+    id,
+    { $set: pick(patch, NAMAZ_FIELDS), $inc: { contentVersion: 1 } },
+    { new: true },
+  );
+  if (!step) throw ApiError.notFound('Namaz step not found');
+  cache.clearPrefix('namaz:');
+  return step;
+}
+
+async function deleteNamazStep(id) {
+  const step = await NamazStep.findByIdAndDelete(id);
+  if (!step) throw ApiError.notFound('Namaz step not found');
+  cache.clearPrefix('namaz:');
+  return { success: true };
+}
+
 module.exports = {
   updateAyah,
   updateWord,
@@ -94,4 +156,10 @@ module.exports = {
   updateDua,
   createDua,
   deleteDua,
+  createKalima,
+  updateKalima,
+  deleteKalima,
+  createNamazStep,
+  updateNamazStep,
+  deleteNamazStep,
 };

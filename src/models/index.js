@@ -9,6 +9,8 @@ module.exports = {
   QaidaLesson: require('./QaidaLesson'),
   QaidaPage: require('./QaidaPage'),
   Dua: require('./Dua'),
+  Kalima: require('./Kalima'),
+  NamazStep: require('./NamazStep'),
   Session: require('./Session'),
   GameSession: require('./GameSession'),
   RewardGrant: require('./RewardGrant'),

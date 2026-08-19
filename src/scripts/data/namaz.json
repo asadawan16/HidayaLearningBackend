@@ -1,0 +1,194 @@
+[
+  {
+    "order": 1,
+    "slug": "niyyah",
+    "name": { "en": "Niyyah — Intention", "ur": "نیّت", "ar": "النِّيَّة" },
+    "pose": "qiyam",
+    "arabic": "",
+    "note": "Stand facing the Qiblah, feet about a hand's width apart, and settle the intention in your heart for the prayer you are about to offer. The intention is of the heart — it does not have to be said aloud.",
+    "repetitions": 1
+  },
+  {
+    "order": 2,
+    "slug": "takbir-tahrimah",
+    "name": { "en": "Takbir Tahrimah — Opening", "ur": "تکبیرِ تحریمہ", "ar": "تَكْبِيرَةُ الْإِحْرَام" },
+    "pose": "takbir",
+    "arabic": "اَللّٰهُ أَكْبَرُ",
+    "transliteration": "Allaahu Akbar",
+    "translation": {
+      "en": "Allah is the Greatest.",
+      "ur": "اللہ سب سے بڑا ہے۔"
+    },
+    "note": "Raise both hands to the ears (men) or the shoulders (women), say the takbir, then fold the hands — below the navel for men, on the chest for women.",
+    "repetitions": 1
+  },
+  {
+    "order": 3,
+    "slug": "thana",
+    "name": { "en": "Thana — Opening Praise", "ur": "ثناء", "ar": "الثَّنَاء" },
+    "pose": "qiyam",
+    "arabic": "سُبْحَانَكَ اَللّٰهُمَّ وَبِحَمْدِكَ وَتَبَارَكَ اسْمُكَ وَتَعَالٰى جَدُّكَ وَلَا إِلٰهَ غَيْرُكَ",
+    "transliteration": "Subhaanaka Allaahumma wa bihamdika, wa tabaarakasmuka, wa ta‘aalaa jadduka, wa laa ilaaha ghayruk",
+    "translation": {
+      "en": "Glory be to You, O Allah, and all praise is Yours. Blessed is Your name, exalted is Your majesty, and there is no god besides You.",
+      "ur": "اے اللہ! تُو پاک ہے اور تیری ہی تعریف ہے، تیرا نام برکت والا ہے، تیری شان بلند ہے، اور تیرے سوا کوئی معبود نہیں۔"
+    },
+    "note": "Recited silently in the first rak'ah only, with the eyes on the place of prostration.",
+    "repetitions": 1
+  },
+  {
+    "order": 4,
+    "slug": "taawwudh-tasmiyah",
+    "name": { "en": "Ta‘awwudh & Tasmiyah", "ur": "تعوذ و تسمیہ", "ar": "التَّعَوُّذ وَالتَّسْمِيَة" },
+    "pose": "qiyam",
+    "arabic": "أَعُوذُ بِاللهِ مِنَ الشَّيْطَانِ الرَّجِيمِ بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيمِ",
+    "transliteration": "A‘oodhu billaahi minash Shaytaanir rajeem. Bismillaahir Rahmaanir Raheem",
+    "translation": {
+      "en": "I seek refuge in Allah from the accursed Shaytan. In the name of Allah, the Most Gracious, the Most Merciful.",
+      "ur": "میں شیطان مردود سے اللہ کی پناہ مانگتا ہوں۔ اللہ کے نام سے جو نہایت مہربان، رحم والا ہے۔"
+    },
+    "note": "Said quietly before Surah Al-Fatihah in the first rak'ah.",
+    "repetitions": 1
+  },
+  {
+    "order": 5,
+    "slug": "fatihah",
+    "name": { "en": "Surah Al-Fatihah", "ur": "سورۃ الفاتحہ", "ar": "سُورَةُ الْفَاتِحَة" },
+    "pose": "qiyam",
+    "arabic": "اَلْحَمْدُ لِلّٰهِ رَبِّ الْعَالَمِينَ الرَّحْمٰنِ الرَّحِيمِ مَالِكِ يَوْمِ الدِّينِ إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ اهْدِنَا الصِّرَاطَ الْمُسْتَقِيمَ صِرَاطَ الَّذِينَ أَنْعَمْتَ عَلَيْهِمْ غَيْرِ الْمَغْضُوبِ عَلَيْهِمْ وَلَا الضَّالِّينَ",
+    "transliteration": "Alhamdu lillaahi Rabbil ‘aalameen. Ar-Rahmaanir Raheem. Maaliki yawmid deen. Iyyaaka na‘budu wa iyyaaka nasta‘een. Ihdinas siraatal mustaqeem. Siraatal ladheena an‘amta ‘alayhim, ghayril maghdoobi ‘alayhim wa lad daalleen.",
+    "translation": {
+      "en": "All praise is for Allah, Lord of all worlds; the Most Gracious, the Most Merciful; Master of the Day of Judgement. You alone we worship, and You alone we ask for help. Guide us along the straight path — the path of those You have blessed, not of those who earned anger, nor of those who went astray.",
+      "ur": "سب تعریف اللہ کے لیے ہے جو تمام جہانوں کا رب ہے۔"
+    },
+    "note": "Recited in every rak'ah — the prayer is not valid without it. Say ‘Aameen’ quietly at the end.",
+    "repetitions": 1
+  },
+  {
+    "order": 6,
+    "slug": "qiraah",
+    "name": { "en": "Qira’ah — Additional Surah", "ur": "قراءت", "ar": "الْقِرَاءَة" },
+    "pose": "qiyam",
+    "arabic": "قُلْ هُوَ اللهُ أَحَدٌ اَللّٰهُ الصَّمَدُ لَمْ يَلِدْ وَلَمْ يُولَدْ وَلَمْ يَكُنْ لَهُ كُفُوًا أَحَدٌ",
+    "transliteration": "Qul huwallaahu Ahad. Allaahus Samad. Lam yalid wa lam yoolad. Wa lam yakun lahoo kufuwan ahad.",
+    "translation": {
+      "en": "Say: He is Allah, the One. Allah, the Eternal Refuge. He neither begets nor is born, and there is none comparable to Him.",
+      "ur": "کہہ دیجیے: وہ اللہ ایک ہے۔"
+    },
+    "note": "Any surah or three ayahs after Al-Fatihah, in the first two rak'ahs only. Surah Al-Ikhlas is shown here as the one most beginners start with.",
+    "repetitions": 1
+  },
+  {
+    "order": 7,
+    "slug": "ruku",
+    "name": { "en": "Ruku‘ — Bowing", "ur": "رکوع", "ar": "الرُّكُوع" },
+    "pose": "ruku",
+    "arabic": "سُبْحَانَ رَبِّيَ الْعَظِيمِ",
+    "transliteration": "Subhaana Rabbiyal ‘Azeem",
+    "translation": {
+      "en": "Glory be to my Lord, the Most Great.",
+      "ur": "پاک ہے میرا رب، جو عظمت والا ہے۔"
+    },
+    "note": "Say ‘Allaahu Akbar’, bow until the back is level, grip the knees with fingers spread, and keep the head in line with the back.",
+    "repetitions": 3
+  },
+  {
+    "order": 8,
+    "slug": "qawmah",
+    "name": { "en": "Qawmah — Standing Up", "ur": "قومہ", "ar": "الْقَوْمَة" },
+    "pose": "qawmah",
+    "arabic": "سَمِعَ اللهُ لِمَنْ حَمِدَهُ رَبَّنَا لَكَ الْحَمْدُ",
+    "transliteration": "Sami‘allaahu liman hamidah. Rabbanaa lakal hamd",
+    "translation": {
+      "en": "Allah hears the one who praises Him. Our Lord, all praise is Yours.",
+      "ur": "اللہ نے سن لی اُس کی جس نے اُس کی تعریف کی۔ اے ہمارے رب! تیرے ہی لیے سب تعریف ہے۔"
+    },
+    "note": "Rise fully upright from ruku‘ and stand still before going down — do not rush into sajdah.",
+    "repetitions": 1
+  },
+  {
+    "order": 9,
+    "slug": "sujood",
+    "name": { "en": "Sujood — Prostration", "ur": "سجدہ", "ar": "السُّجُود" },
+    "pose": "sujood",
+    "arabic": "سُبْحَانَ رَبِّيَ الْأَعْلٰى",
+    "transliteration": "Subhaana Rabbiyal A‘laa",
+    "translation": {
+      "en": "Glory be to my Lord, the Most High.",
+      "ur": "پاک ہے میرا رب، جو سب سے بلند ہے۔"
+    },
+    "note": "Say ‘Allaahu Akbar’ and go down so that seven parts touch the ground: the forehead with the nose, both palms, both knees, and the toes of both feet.",
+    "repetitions": 3
+  },
+  {
+    "order": 10,
+    "slug": "jalsa",
+    "name": { "en": "Jalsa — Sitting Between Sajdahs", "ur": "جلسہ", "ar": "الْجَلْسَة" },
+    "pose": "jalsa",
+    "arabic": "رَبِّ اغْفِرْ لِي",
+    "transliteration": "Rabbighfir lee",
+    "translation": {
+      "en": "My Lord, forgive me.",
+      "ur": "اے میرے رب! مجھے بخش دے۔"
+    },
+    "note": "Sit up calmly between the two sajdahs, then say ‘Allaahu Akbar’ and prostrate a second time. Two sajdahs complete one rak'ah.",
+    "repetitions": 1
+  },
+  {
+    "order": 11,
+    "slug": "tashahhud",
+    "name": { "en": "Tashahhud — At-Tahiyyat", "ur": "تشہد (التحیات)", "ar": "التَّشَهُّد" },
+    "pose": "tashahhud",
+    "arabic": "اَلتَّحِيَّاتُ لِلّٰهِ وَالصَّلَوَاتُ وَالطَّيِّبَاتُ اَلسَّلَامُ عَلَيْكَ أَيُّهَا النَّبِيُّ وَرَحْمَةُ اللهِ وَبَرَكَاتُهُ اَلسَّلَامُ عَلَيْنَا وَعَلٰى عِبَادِ اللهِ الصَّالِحِينَ أَشْهَدُ أَنْ لَا إِلٰهَ إِلَّا اللهُ وَأَشْهَدُ أَنَّ مُحَمَّدًا عَبْدُهُ وَرَسُولُهُ",
+    "transliteration": "At-tahiyyaatu lillaahi was salawaatu wat tayyibaat. As-salaamu ‘alayka ayyuhan Nabiyyu wa rahmatullaahi wa barakaatuh. As-salaamu ‘alaynaa wa ‘alaa ‘ibaadillaahis saaliheen. Ash-hadu an laa ilaaha illallaahu wa ash-hadu anna Muhammadan ‘abduhoo wa Rasooluh.",
+    "translation": {
+      "en": "All greetings, prayers and good things are for Allah. Peace be upon you, O Prophet, and the mercy of Allah and His blessings. Peace be upon us and upon the righteous servants of Allah. I bear witness that there is no god but Allah, and I bear witness that Muhammad is His servant and His Messenger.",
+      "ur": "تمام تعظیمیں، عبادتیں اور پاکیزہ باتیں اللہ کے لیے ہیں۔"
+    },
+    "note": "Sit after the second rak'ah. At ‘laa ilaaha’ raise the right index finger, and lower it at ‘illallaah’.",
+    "repetitions": 1
+  },
+  {
+    "order": 12,
+    "slug": "durood-ibrahim",
+    "name": { "en": "Durood Ibrahim", "ur": "درود ابراہیمی", "ar": "الصَّلَاةُ الْإِبْرَاهِيمِيَّة" },
+    "pose": "tashahhud",
+    "arabic": "اَللّٰهُمَّ صَلِّ عَلٰى مُحَمَّدٍ وَعَلٰى آلِ مُحَمَّدٍ كَمَا صَلَّيْتَ عَلٰى إِبْرَاهِيمَ وَعَلٰى آلِ إِبْرَاهِيمَ إِنَّكَ حَمِيدٌ مَجِيدٌ اَللّٰهُمَّ بَارِكْ عَلٰى مُحَمَّدٍ وَعَلٰى آلِ مُحَمَّدٍ كَمَا بَارَكْتَ عَلٰى إِبْرَاهِيمَ وَعَلٰى آلِ إِبْرَاهِيمَ إِنَّكَ حَمِيدٌ مَجِيدٌ",
+    "transliteration": "Allaahumma salli ‘alaa Muhammadin wa ‘alaa aali Muhammad, kamaa sallayta ‘alaa Ibraaheema wa ‘alaa aali Ibraaheem, innaka Hameedum Majeed. Allaahumma baarik ‘alaa Muhammadin wa ‘alaa aali Muhammad, kamaa baarakta ‘alaa Ibraaheema wa ‘alaa aali Ibraaheem, innaka Hameedum Majeed.",
+    "translation": {
+      "en": "O Allah, send Your grace upon Muhammad and the family of Muhammad, as You sent it upon Ibrahim and the family of Ibrahim — You are Praiseworthy, Glorious. O Allah, bless Muhammad and the family of Muhammad, as You blessed Ibrahim and the family of Ibrahim — You are Praiseworthy, Glorious.",
+      "ur": "اے اللہ! محمد ﷺ اور آلِ محمد پر رحمت نازل فرما، جیسے تُو نے ابراہیم علیہ السلام اور آلِ ابراہیم پر رحمت نازل فرمائی۔"
+    },
+    "note": "Recited in the final sitting, after the Tashahhud.",
+    "repetitions": 1
+  },
+  {
+    "order": 13,
+    "slug": "dua-masura",
+    "name": { "en": "Du‘a Masura", "ur": "دعائے ماثورہ", "ar": "الدُّعَاءُ الْمَأْثُور" },
+    "pose": "tashahhud",
+    "arabic": "رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ",
+    "transliteration": "Rabbanaa aatinaa fid dunyaa hasanatan wa fil aakhirati hasanatan wa qinaa ‘adhaaban naar",
+    "translation": {
+      "en": "Our Lord, give us good in this world and good in the Hereafter, and protect us from the punishment of the Fire.",
+      "ur": "اے ہمارے رب! ہمیں دنیا میں بھلائی دے اور آخرت میں بھی بھلائی، اور ہمیں آگ کے عذاب سے بچا۔"
+    },
+    "note": "Any du‘a from the Qur'an or Sunnah may be said here, after the Durood and before the salam.",
+    "repetitions": 1,
+    "optional": true
+  },
+  {
+    "order": 14,
+    "slug": "salam",
+    "name": { "en": "Salam — Closing", "ur": "سلام", "ar": "السَّلَام" },
+    "pose": "salam",
+    "arabic": "اَلسَّلَامُ عَلَيْكُمْ وَرَحْمَةُ اللهِ",
+    "transliteration": "As-salaamu ‘alaykum wa rahmatullaah",
+    "translation": {
+      "en": "Peace be upon you, and the mercy of Allah.",
+      "ur": "تم پر سلامتی ہو اور اللہ کی رحمت۔"
+    },
+    "note": "Turn the head to the right and say it, then to the left and say it again. The prayer is now complete.",
+    "repetitions": 2
+  }
+]

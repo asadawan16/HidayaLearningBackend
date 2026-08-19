@@ -16,4 +16,11 @@ router.get('/qaida/lessons/:slug', ctrl.qaidaLesson);
 // ---- Duas ----
 router.get('/duas', ctrl.duas);
 
+// ---- Kalimas (the six) ----
+router.get('/kalimas', ctrl.kalimas);
+router.get('/kalimas/:slug', ctrl.kalima);
+
+// ---- Namaz (guided salah, in order) ----
+router.get('/namaz', ctrl.namaz);
+
 module.exports = router;

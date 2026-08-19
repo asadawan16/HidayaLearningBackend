@@ -40,4 +40,20 @@ const duas = asyncHandler(async (req, res) => {
   res.json({ success: true, data: await service.listDuas(req.query.category) });
 });
 
-module.exports = { surahs, surah, juzList, juz, qaidaLessons, qaidaLesson, duas };
+const kalimas = asyncHandler(async (req, res) => {
+  res.json({ success: true, data: await service.listKalimas() });
+});
+
+const kalima = asyncHandler(async (req, res) => {
+  const data = await service.getKalima(req.params.slug);
+  if (!data) throw ApiError.notFound('Kalima not found');
+  res.json({ success: true, data });
+});
+
+const namaz = asyncHandler(async (req, res) => {
+  res.json({ success: true, data: await service.listNamazSteps() });
+});
+
+module.exports = {
+  surahs, surah, juzList, juz, qaidaLessons, qaidaLesson, duas, kalimas, kalima, namaz,
+};

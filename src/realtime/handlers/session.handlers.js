@@ -42,7 +42,10 @@ module.exports = function registerSessionHandlers(io, socket) {
     rooms.addStudent(code, socket.id);
     socket.data.sessionCode = code;
     io.to(r.hostSocketId).emit('session:student-joined', { socketId: socket.id });
-    return ack?.({ ok: true, context: r.context });
+    // The board goes out with the ack, same as the context: a student who joins
+    // twenty minutes in must see the ink that is already on it, not a blank
+    // board that only starts filling from their next stroke onwards.
+    return ack?.({ ok: true, context: r.context, board: rooms.getBoard(code) });
   });
 
   // Relay tutor → students for each live-mirror event.
@@ -58,12 +61,20 @@ module.exports = function registerSessionHandlers(io, socket) {
     'session:context',
     'session:feedback',
     'session:mood', // tutor's emotional read on the lesson — mirrors to the student
+    'session:board', // whiteboard ink — deliberately NOT volatile, see below
   ];
   // High-frequency, disposable events: only the newest one has any value. Sent
   // volatile so that if a student's connection is momentarily backed up the
   // packet is DROPPED rather than queued — a queue of stale pointer positions
   // is exactly what makes a mirror feel laggy, because the student then plays
   // back the tutor's past movements in slow motion instead of skipping to now.
+  //
+  // session:board is the deliberate exception. Laser strokes are disposable —
+  // losing one costs nothing because it was going to fade in a second anyway.
+  // Whiteboard ink is permanent for the rest of the lesson, so a dropped packet
+  // is a stroke the student never sees and the tutor has no way to know is
+  // missing. It goes out reliably even if that means it queues behind a backed-
+  // up connection.
   const VOLATILE_EVENTS = new Set(['session:cursor', 'session:hover', 'session:scroll']);
 
   MIRROR_EVENTS.forEach((event) => {
@@ -71,6 +82,7 @@ module.exports = function registerSessionHandlers(io, socket) {
       const code = socket.data.sessionCode;
       if (!code || isStudent(socket)) return; // only the tutor drives the mirror
       if (event === 'session:context') rooms.setContext(code, payload);
+      if (event === 'session:board') rooms.applyBoard(code, payload);
       const target = socket.to(room(code));
       // ...but a null cursor means "pointer left the stage" and must land, or
       // the student is left with a pointer frozen mid-page.

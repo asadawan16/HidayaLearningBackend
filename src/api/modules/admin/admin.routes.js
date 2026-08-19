@@ -22,4 +22,14 @@ router.post('/duas', validate(v.duaCreate), ctrl.createDua);
 router.patch('/duas/:id', validate(v.duaUpdate), ctrl.updateDua);
 router.delete('/duas/:id', validate(v.duaDelete), ctrl.deleteDua);
 
+// Kalimas CRUD (the six ship in the seed; admins can add more)
+router.post('/kalimas', validate(v.kalimaCreate), ctrl.createKalima);
+router.patch('/kalimas/:id', validate(v.kalimaUpdate), ctrl.updateKalima);
+router.delete('/kalimas/:id', validate(v.kalimaDelete), ctrl.deleteKalima);
+
+// Namaz steps CRUD
+router.post('/namaz', validate(v.namazCreate), ctrl.createNamazStep);
+router.patch('/namaz/:id', validate(v.namazUpdate), ctrl.updateNamazStep);
+router.delete('/namaz/:id', validate(v.namazDelete), ctrl.deleteNamazStep);
+
 module.exports = router;

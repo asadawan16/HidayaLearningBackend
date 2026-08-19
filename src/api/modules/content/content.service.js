@@ -1,5 +1,7 @@
 const cache = require('../../../services/cache.service');
-const { Surah, Ayah, Word, QaidaLesson, QaidaPage, Dua } = require('../../../models');
+const {
+  Surah, Ayah, Word, QaidaLesson, QaidaPage, Dua, Kalima, NamazStep,
+} = require('../../../models');
 
 // ---- Quran ----
 const listSurahs = () =>
@@ -127,6 +129,17 @@ const listDuas = (category) =>
   cache.wrap(`dua:list:${category || 'all'}`, 0, () =>
     Dua.find(category ? { category } : {}).sort({ category: 1, order: 1 }).lean());
 
+// ---- Kalimas ----
+const listKalimas = () =>
+  cache.wrap('kalima:all', 0, () => Kalima.find().sort('order').lean());
+
+const getKalima = (slug) =>
+  cache.wrap(`kalima:one:${slug}`, 0, () => Kalima.findOne({ slug }).lean());
+
+// ---- Namaz ----
+const listNamazSteps = () =>
+  cache.wrap('namaz:steps', 0, () => NamazStep.find().sort('order').lean());
+
 // Called by the admin module after any content edit to invalidate caches.
 const invalidate = (kind) => cache.clearPrefix(`${kind}:`);
 
@@ -138,5 +151,8 @@ module.exports = {
   listQaidaLessons,
   getQaidaLesson,
   listDuas,
+  listKalimas,
+  getKalima,
+  listNamazSteps,
   invalidate,
 };

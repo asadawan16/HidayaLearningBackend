@@ -36,4 +36,47 @@ const deleteDua = asyncHandler(async (req, res) => {
   res.json({ success: true, ...data });
 });
 
-module.exports = { updateAyah, updateWord, updateQaidaLesson, createDua, updateDua, deleteDua };
+const createKalima = asyncHandler(async (req, res) => {
+  const data = await service.createKalima(req.body);
+  res.status(201).json({ success: true, data });
+});
+
+const updateKalima = asyncHandler(async (req, res) => {
+  const data = await service.updateKalima(req.params.id, req.body);
+  res.json({ success: true, data });
+});
+
+const deleteKalima = asyncHandler(async (req, res) => {
+  const data = await service.deleteKalima(req.params.id);
+  res.json({ success: true, ...data });
+});
+
+const createNamazStep = asyncHandler(async (req, res) => {
+  const data = await service.createNamazStep(req.body);
+  res.status(201).json({ success: true, data });
+});
+
+const updateNamazStep = asyncHandler(async (req, res) => {
+  const data = await service.updateNamazStep(req.params.id, req.body);
+  res.json({ success: true, data });
+});
+
+const deleteNamazStep = asyncHandler(async (req, res) => {
+  const data = await service.deleteNamazStep(req.params.id);
+  res.json({ success: true, ...data });
+});
+
+module.exports = {
+  updateAyah,
+  updateWord,
+  updateQaidaLesson,
+  createDua,
+  updateDua,
+  deleteDua,
+  createKalima,
+  updateKalima,
+  deleteKalima,
+  createNamazStep,
+  updateNamazStep,
+  deleteNamazStep,
+};
