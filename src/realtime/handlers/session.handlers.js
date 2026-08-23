@@ -44,8 +44,15 @@ module.exports = function registerSessionHandlers(io, socket) {
     io.to(r.hostSocketId).emit('session:student-joined', { socketId: socket.id });
     // The board goes out with the ack, same as the context: a student who joins
     // twenty minutes in must see the ink that is already on it, not a blank
-    // board that only starts filling from their next stroke onwards.
-    return ack?.({ ok: true, context: r.context, board: rooms.getBoard(code) });
+    // board that only starts filling from their next stroke onwards. Highlights
+    // and the tutor's chosen buddy ride along for the same reason.
+    return ack?.({
+      ok: true,
+      context: r.context,
+      board: rooms.getBoard(code),
+      marks: rooms.getMarks(code),
+      buddy: rooms.getBuddy(code),
+    });
   });
 
   // Relay tutor → students for each live-mirror event.
@@ -62,6 +69,8 @@ module.exports = function registerSessionHandlers(io, socket) {
     'session:feedback',
     'session:mood', // tutor's emotional read on the lesson — mirrors to the student
     'session:board', // whiteboard ink — deliberately NOT volatile, see below
+    'session:mark', // highlighter bands on the lesson — same contract as the board
+    'session:buddy', // which child character the student sees, chosen by the tutor
   ];
   // High-frequency, disposable events: only the newest one has any value. Sent
   // volatile so that if a student's connection is momentarily backed up the
@@ -83,6 +92,8 @@ module.exports = function registerSessionHandlers(io, socket) {
       if (!code || isStudent(socket)) return; // only the tutor drives the mirror
       if (event === 'session:context') rooms.setContext(code, payload);
       if (event === 'session:board') rooms.applyBoard(code, payload);
+      if (event === 'session:mark') rooms.applyMark(code, payload);
+      if (event === 'session:buddy') rooms.setBuddy(code, payload?.buddy);
       const target = socket.to(room(code));
       // ...but a null cursor means "pointer left the stage" and must land, or
       // the student is left with a pointer frozen mid-page.
