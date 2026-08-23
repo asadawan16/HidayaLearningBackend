@@ -14,6 +14,7 @@
     "import:kalimas": "node src/scripts/importKalimas.js",
     "import:namaz": "node src/scripts/importNamaz.js",
     "import:quran": "node src/scripts/importQuran.js",
+    "import:quran:resume": "node src/scripts/importQuran.js --resume",
     "seed:content": "npm run import:qaida && npm run import:duas && npm run import:kalimas && npm run import:namaz"
   },
   "dependencies": {
