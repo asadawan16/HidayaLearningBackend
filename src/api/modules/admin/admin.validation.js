@@ -37,27 +37,34 @@ const word = {
 };
 
 const cell = z.object({ order: z.number().optional(), text: z.string(), overrides: z.any().optional() });
-const qaidaLesson = {
-  params: z.object({ slug: z.string() }),
-  body: z.object({
-    title: z.object({ en: z.string().optional(), ur: z.string().optional(), tr: z.string().optional() }).optional(),
-    subtitle: z.string().optional(),
-    hint: z.string().optional(),
-    complete: z.boolean().optional(),
-    order: z.number().int().optional(),
-    sourcePages: z.array(z.number().int()).optional(),
-    pages: z
-      .array(
-        z.object({
-          order: z.number().int().optional(),
-          heading: z.string().nullable().optional(),
-          columns: z.number().int().min(1).max(12).optional(),
-          cells: z.array(cell),
-        }),
-      )
-      .optional(),
-  }),
-};
+const qaidaBody = z.object({
+  // The slug is the lesson's public URL (/lesson/:slug). Editable, because an
+  // admin who typos it while creating a chapter would otherwise have to delete
+  // the chapter to fix it — but the unique index still rejects a clash.
+  slug: z.string().min(1).optional(),
+  title: z.object({ en: z.string().optional(), ur: z.string().optional(), tr: z.string().optional() }).optional(),
+  subtitle: z.string().optional(),
+  hint: z.string().optional(),
+  complete: z.boolean().optional(),
+  order: z.number().int().optional(),
+  sourcePages: z.array(z.number().int()).optional(),
+  pages: z
+    .array(
+      z.object({
+        order: z.number().int().optional(),
+        heading: z.string().nullable().optional(),
+        columns: z.number().int().min(1).max(12).optional(),
+        cells: z.array(cell),
+      }),
+    )
+    .optional(),
+});
+
+const qaidaLesson = { params: z.object({ slug: z.string() }), body: qaidaBody };
+// A chapter needs a slug and nothing else: it is created empty and filled in.
+// `order` is optional and defaults to the end of the book (see the service).
+const qaidaLessonCreate = { body: qaidaBody.extend({ slug: z.string().min(1) }) };
+const qaidaLessonDelete = { params: z.object({ slug: z.string() }) };
 
 const duaBody = z.object({
   category: z.string().optional(),
@@ -120,6 +127,8 @@ module.exports = {
   ayah,
   word,
   qaidaLesson,
+  qaidaLessonCreate,
+  qaidaLessonDelete,
   duaCreate,
   duaUpdate,
   duaDelete,

@@ -14,8 +14,12 @@ router.use(authenticate, authorize('admin', 'superadmin'));
 router.patch('/quran/ayahs/:surah/:number', validate(v.ayah), ctrl.updateAyah);
 router.patch('/quran/words/:surah/:ayah/:position', validate(v.word), ctrl.updateWord);
 
-// Qaida lesson edits (metadata and/or full page/cell replacement)
+// Qaida lessons: full CRUD. Editing was never enough on its own — an academy
+// teaching its own syllabus has to be able to add a chapter, not only pages to
+// the sixteen that came out of the scans.
+router.post('/qaida/lessons', validate(v.qaidaLessonCreate), ctrl.createQaidaLesson);
 router.patch('/qaida/lessons/:slug', validate(v.qaidaLesson), ctrl.updateQaidaLesson);
+router.delete('/qaida/lessons/:slug', validate(v.qaidaLessonDelete), ctrl.deleteQaidaLesson);
 
 // Duas CRUD
 router.post('/duas', validate(v.duaCreate), ctrl.createDua);

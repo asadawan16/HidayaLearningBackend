@@ -31,33 +31,84 @@ async function updateWord(surah, ayah, position, patch) {
   return word;
 }
 
+const QAIDA_FIELDS = ['slug', 'title', 'subtitle', 'hint', 'complete', 'order', 'sourcePages'];
+
+// Pages are always replaced wholesale rather than patched: the editor sends the
+// grid it is showing, and a per-page diff would have to reconcile cell order
+// across inserts and removals for no gain — a Qaida lesson is a few dozen short
+// strings, not a document.
+const writePages = async (lessonId, pages) => {
+  await QaidaPage.deleteMany({ lesson: lessonId });
+  if (!pages.length) return;
+  await QaidaPage.insertMany(
+    pages.map((p, i) => ({
+      lesson: lessonId,
+      order: p.order ?? i,
+      heading: p.heading ?? null,
+      columns: p.columns ?? 5,
+      cells: (p.cells || []).map((c, ci) => ({ order: c.order ?? ci, text: c.text, overrides: c.overrides })),
+    })),
+  );
+};
+
+// Add a chapter to the Qaida. The book shipped with sixteen lessons from the
+// scans, but an academy teaching its own syllabus has to be able to add to it
+// without a redeploy — which is the whole premise of content living here.
+async function createQaidaLesson(payload) {
+  const slug = String(payload.slug || '').trim();
+  const clash = await QaidaLesson.findOne({ slug }).lean();
+  if (clash) throw ApiError.conflict(`A lesson with the slug “${slug}” already exists`);
+
+  // Default to the end of the book. The public list is keyed by `order`, so
+  // silently landing on an existing number would collide with a real lesson.
+  let order = payload.order;
+  if (typeof order !== 'number') {
+    const last = await QaidaLesson.findOne().sort('-order').select('order').lean();
+    order = (last?.order ?? 0) + 1;
+  }
+
+  const lesson = await QaidaLesson.create({
+    ...pick(payload, QAIDA_FIELDS),
+    slug,
+    order,
+    complete: payload.complete ?? false,
+  });
+  if (Array.isArray(payload.pages)) await writePages(lesson._id, payload.pages);
+
+  cache.clearPrefix('qaida:');
+  return lesson;
+}
+
 async function updateQaidaLesson(slug, patch) {
+  // A renamed slug must not land on another lesson — the unique index would
+  // reject it as a bare "Duplicate value", which tells the admin nothing.
+  if (patch.slug && patch.slug !== slug) {
+    const clash = await QaidaLesson.findOne({ slug: patch.slug }).lean();
+    if (clash) throw ApiError.conflict(`A lesson with the slug “${patch.slug}” already exists`);
+  }
+
   const lesson = await QaidaLesson.findOneAndUpdate(
     { slug },
-    {
-      $set: pick(patch, ['title', 'subtitle', 'hint', 'complete', 'order', 'sourcePages']),
-      $inc: { contentVersion: 1 },
-    },
+    { $set: pick(patch, QAIDA_FIELDS), $inc: { contentVersion: 1 } },
     { new: true },
   );
   if (!lesson) throw ApiError.notFound('Lesson not found');
 
   // Optionally replace the lesson's pages in one shot.
-  if (Array.isArray(patch.pages)) {
-    await QaidaPage.deleteMany({ lesson: lesson._id });
-    await QaidaPage.insertMany(
-      patch.pages.map((p, i) => ({
-        lesson: lesson._id,
-        order: p.order ?? i,
-        heading: p.heading ?? null,
-        columns: p.columns ?? 5,
-        cells: (p.cells || []).map((c, ci) => ({ order: c.order ?? ci, text: c.text, overrides: c.overrides })),
-      })),
-    );
-  }
+  if (Array.isArray(patch.pages)) await writePages(lesson._id, patch.pages);
 
   cache.clearPrefix('qaida:');
   return lesson;
+}
+
+async function deleteQaidaLesson(slug) {
+  const lesson = await QaidaLesson.findOneAndDelete({ slug });
+  if (!lesson) throw ApiError.notFound('Lesson not found');
+  // The pages are a separate collection, so they would otherwise be orphaned
+  // rows pointing at an id that no longer resolves.
+  await QaidaPage.deleteMany({ lesson: lesson._id });
+  cache.clearPrefix('qaida:');
+  return { success: true };
 }
 
 async function updateDua(id, patch) {
@@ -152,7 +203,9 @@ async function deleteNamazStep(id) {
 module.exports = {
   updateAyah,
   updateWord,
+  createQaidaLesson,
   updateQaidaLesson,
+  deleteQaidaLesson,
   updateDua,
   createDua,
   deleteDua,

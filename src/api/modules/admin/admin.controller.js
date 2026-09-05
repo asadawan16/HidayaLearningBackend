@@ -16,9 +16,19 @@ const updateWord = asyncHandler(async (req, res) => {
   res.json({ success: true, data });
 });
 
+const createQaidaLesson = asyncHandler(async (req, res) => {
+  const data = await service.createQaidaLesson(req.body);
+  res.status(201).json({ success: true, data });
+});
+
 const updateQaidaLesson = asyncHandler(async (req, res) => {
   const data = await service.updateQaidaLesson(req.params.slug, req.body);
   res.json({ success: true, data });
+});
+
+const deleteQaidaLesson = asyncHandler(async (req, res) => {
+  const data = await service.deleteQaidaLesson(req.params.slug);
+  res.json({ success: true, ...data });
 });
 
 const createDua = asyncHandler(async (req, res) => {
@@ -69,7 +79,9 @@ const deleteNamazStep = asyncHandler(async (req, res) => {
 module.exports = {
   updateAyah,
   updateWord,
+  createQaidaLesson,
   updateQaidaLesson,
+  deleteQaidaLesson,
   createDua,
   updateDua,
   deleteDua,
