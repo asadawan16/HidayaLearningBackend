@@ -180,9 +180,12 @@ const getQaidaLesson = (slug) =>
   });
 
 // ---- Duas ----
+// `featured: -1` first so a featured du'ā arrives at the head of the list even
+// for a client that doesn't know the flag — the page pulls them out by it, but
+// the order shouldn't depend on that.
 const listDuas = (category) =>
   cache.wrap(`dua:list:${category || 'all'}`, 0, () =>
-    Dua.find(category ? { category } : {}).sort({ category: 1, order: 1 }).lean());
+    Dua.find(category ? { category } : {}).sort({ featured: -1, category: 1, order: 1 }).lean());
 
 // ---- Kalimas ----
 const listKalimas = () =>

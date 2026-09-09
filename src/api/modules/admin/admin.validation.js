@@ -73,11 +73,20 @@ const duaBody = z.object({
   arabic: z.string().optional(),
   transliteration: z.string().optional(),
   translation: z.object({ en: z.string().optional(), ur: z.string().optional() }).optional(),
+  featured: z.boolean().optional(),
   reference: z.string().optional(),
   audioUrl: z.string().url().optional(),
 });
 
-const duaCreate = { body: duaBody.extend({ arabic: z.string().min(1) }) };
+// A du'ā has to say SOMETHING. `arabic` used to be the required field, which
+// ruled out the ones that only exist in Urdu and English — so the requirement is
+// now the pair: Arabic, or a translation, or both.
+const duaCreate = {
+  body: duaBody.refine(
+    (d) => Boolean(d.arabic?.trim() || d.translation?.en?.trim() || d.translation?.ur?.trim()),
+    { message: 'A du’ā needs either Arabic or a translation', path: ['arabic'] },
+  ),
+};
 const duaUpdate = { params: z.object({ id: z.string() }), body: duaBody };
 const duaDelete = { params: z.object({ id: z.string() }) };
 
