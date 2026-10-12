@@ -1,7 +1,7 @@
 // In-memory room registry for live-mirror sessions. No Redis — valid for a single
 // cPanel/Passenger instance. If the platform is ever scaled horizontally this is
 // the one piece to move to a shared adapter (documented tradeoff).
-const rooms = new Map(); // code -> { code, hostSocketId, students:Set, context, board, marks, buddy, expiresAt }
+const rooms = new Map(); // code -> { code, hostSocketId, hostUserId, students:Set, context, board, marks, buddy, mood, expiresAt, graceTimer }
 
 // Whiteboard ink is the one mirrored thing that is not disposable: unlike the
 // pointer or a laser stroke, it is still on screen minutes after it was drawn,
@@ -36,22 +36,70 @@ function foldInk(list, op, cap) {
   return list;
 }
 
+// How long a room waits for a tutor whose socket has gone before it is closed.
+//
+// A room used to die with its host's socket, and a socket dies for reasons that
+// are not "the lesson is over": the tutor reloads the page, the laptop's wifi
+// drops for a few seconds, a tablet puts the tab to sleep. Each of those told
+// every student "this session has ended" and threw away the board, the
+// highlights and the page being taught — and the tutor came back to a start
+// screen, with a link in the student's chat that no longer led anywhere.
+//
+// A minute covers a reload on a slow connection and a short network drop. The
+// price is that a tutor who closes the tab instead of pressing End leaves the
+// student on a quiet page for that minute rather than telling them at once.
+const HOST_GRACE_MS = 60 * 1000;
+
+const stopGrace = (room) => {
+  if (!room) return;
+  if (room.graceTimer) clearTimeout(room.graceTimer);
+  room.graceTimer = null;
+};
+
 module.exports = {
-  create(code, hostSocketId, expiresAt) {
+  HOST_GRACE_MS,
+  create(code, hostSocketId, expiresAt, hostUserId) {
+    stopGrace(rooms.get(code));
     const room = {
       code,
       hostSocketId,
+      hostUserId: hostUserId || null,
       students: new Set(),
       context: null,
       board: [],
       marks: [],
       buddy: null,
+      mood: null,
       expiresAt,
+      graceTimer: null,
     };
     rooms.set(code, room);
     return room;
   },
   get: (code) => rooms.get(code),
+  // The tutor is back on a new socket (a reload, or a reconnect after a drop):
+  // same room, same students, same ink — only the socket that drives it changes.
+  reattachHost(code, hostSocketId) {
+    const r = rooms.get(code);
+    if (!r) return null;
+    stopGrace(r);
+    r.hostSocketId = hostSocketId;
+    return r;
+  },
+  // The tutor's socket has gone. Keep the room for HOST_GRACE_MS and call
+  // `onLapse` only if nobody has reattached by then.
+  holdForHost(code, onLapse) {
+    const r = rooms.get(code);
+    if (!r) return;
+    stopGrace(r);
+    r.graceTimer = setTimeout(() => {
+      r.graceTimer = null;
+      // The room may have been replaced or ended while the timer ran.
+      if (rooms.get(code) === r) onLapse();
+    }, HOST_GRACE_MS);
+    // A waiting room must not be what keeps the process alive on shutdown.
+    r.graceTimer.unref?.();
+  },
   addStudent(code, socketId) {
     const r = rooms.get(code);
     if (r) r.students.add(socketId);
@@ -98,6 +146,17 @@ module.exports = {
     if (r) r.buddy = buddy || null;
   },
   getBuddy: (code) => rooms.get(code)?.buddy || null,
-  destroy: (code) => rooms.delete(code),
+
+  // The tutor's read on the lesson. Remembered for the same reason as the
+  // buddy: whoever joins, or comes back, has to land on the lesson as it stands.
+  setMood(code, mood) {
+    const r = rooms.get(code);
+    if (r) r.mood = typeof mood === 'string' ? mood : null;
+  },
+  getMood: (code) => rooms.get(code)?.mood || null,
+  destroy(code) {
+    stopGrace(rooms.get(code));
+    return rooms.delete(code);
+  },
   isExpired: (room) => !!room?.expiresAt && Date.now() > new Date(room.expiresAt).getTime(),
 };

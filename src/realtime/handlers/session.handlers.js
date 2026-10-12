@@ -7,11 +7,39 @@ const isStudent = (socket) => socket.data.role === 'student';
 // Live-mirror: the tutor's UI activity is broadcast to every student in the room
 // so they see the same pointer, hovers and highlights WITHOUT screen sharing.
 module.exports = function registerSessionHandlers(io, socket) {
-  // Tutor opens the live room.
+  // Tutor opens the live room — or comes back to one.
+  //
+  // This fires on every connect, not only the first: a page reload and a
+  // reconnect after a network drop both arrive here on a brand-new socket. If
+  // the room is still standing it is handed back as it was, and the ack carries
+  // everything a reloaded page has lost (what is being taught, the ink, who is
+  // watching). Creating a fresh room here, as this used to, is what emptied the
+  // student's screen every time the tutor's connection blinked.
   socket.on('session:host', ({ code, expiresAt } = {}, ack) => {
     if (isStudent(socket)) return ack?.({ ok: false, error: 'forbidden' });
     if (!code) return ack?.({ ok: false, error: 'bad_request' });
-    rooms.create(code, socket.id, expiresAt);
+    const existing = rooms.get(code);
+    if (existing && !rooms.isExpired(existing)) {
+      // Only the tutor who opened it may take it back. Without this, knowing a
+      // code would be enough to seize a lesson in progress.
+      if (existing.hostUserId && existing.hostUserId !== socket.data.userId) {
+        return ack?.({ ok: false, error: 'forbidden' });
+      }
+      rooms.reattachHost(code, socket.id);
+      socket.join(room(code));
+      socket.data.sessionCode = code;
+      return ack?.({
+        ok: true,
+        resumed: true,
+        context: existing.context,
+        board: rooms.getBoard(code),
+        marks: rooms.getMarks(code),
+        buddy: rooms.getBuddy(code),
+        mood: rooms.getMood(code),
+        students: existing.students.size,
+      });
+    }
+    rooms.create(code, socket.id, expiresAt, socket.data.userId);
     socket.join(room(code));
     socket.data.sessionCode = code;
     return ack?.({ ok: true });
@@ -52,6 +80,7 @@ module.exports = function registerSessionHandlers(io, socket) {
       board: rooms.getBoard(code),
       marks: rooms.getMarks(code),
       buddy: rooms.getBuddy(code),
+      mood: rooms.getMood(code),
     });
   });
 
@@ -94,6 +123,7 @@ module.exports = function registerSessionHandlers(io, socket) {
       if (event === 'session:board') rooms.applyBoard(code, payload);
       if (event === 'session:mark') rooms.applyMark(code, payload);
       if (event === 'session:buddy') rooms.setBuddy(code, payload?.buddy);
+      if (event === 'session:mood') rooms.setMood(code, payload?.mood);
       const target = socket.to(room(code));
       // ...but a null cursor means "pointer left the stage" and must land, or
       // the student is left with a pointer frozen mid-page.
@@ -117,8 +147,14 @@ module.exports = function registerSessionHandlers(io, socket) {
     const r = rooms.get(code);
     if (!r) return;
     if (r.hostSocketId === socket.id) {
-      io.to(room(code)).emit('session:ended');
-      rooms.destroy(code);
+      // Not the end of the lesson yet — see HOST_GRACE_MS. The room is held for
+      // the tutor to come back to, and closed only if they do not. (A socket
+      // the tutor has already replaced never gets here: reattaching moved
+      // hostSocketId on, so its late disconnect falls through below.)
+      rooms.holdForHost(code, () => {
+        io.to(room(code)).emit('session:ended');
+        rooms.destroy(code);
+      });
     } else {
       rooms.removeStudent(code, socket.id);
     }
