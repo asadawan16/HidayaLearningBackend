@@ -39,7 +39,7 @@ function createExpressApp() {
     }));
   }
 
-  app.get('/', (req, res) => res.json({ name: 'Hidaya Online API', status: 'ok' }));
+  app.get('/', (req, res) => res.json({ name: `${env.APP_NAME} API`, status: 'ok' }));
   app.use('/api', apiRouter);
 
   app.use(notFound);

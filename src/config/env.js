@@ -36,6 +36,9 @@ const env = {
   SMTP_PORT: parseInt(opt('SMTP_PORT', '587'), 10),
   SMTP_USER: opt('SMTP_USER'),
   SMTP_PASS: opt('SMTP_PASS'),
+  // The site's name in emails and the API banner. One codebase runs more than
+  // one site (Hidaya Online, Qaida Online), so it is a setting, not a string.
+  APP_NAME: opt('APP_NAME', 'Hidaya Online'),
   MAIL_FROM: opt('MAIL_FROM', 'Hidaya Online <no-reply@hidaya.online>'),
 
   CONTENT_CACHE_TTL_MS: parseInt(opt('CONTENT_CACHE_TTL_MS', String(1000 * 60 * 60)), 10),

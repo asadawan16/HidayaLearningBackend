@@ -2,6 +2,7 @@ const crypto = require('crypto');
 const ApiError = require('../../../utils/ApiError');
 const { AcademyApplication, Academy, User } = require('../../../models');
 const { sendMail } = require('../../../services/email.service');
+const { env } = require('../../../config/env');
 
 const slugify = (s) =>
   s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
@@ -61,14 +62,14 @@ async function approve(applicationId, adminId, maxConcurrentSessions = 1) {
 
   await sendMail({
     to: app.contactEmail,
-    subject: 'Your Hidaya Online academy has been approved',
+    subject: `Your ${env.APP_NAME} academy has been approved`,
     text:
       `Assalamu alaikum ${app.contactName},\n\n` +
-      `Your academy "${academy.name}" has been approved on Hidaya Online.\n\n` +
+      `Your academy "${academy.name}" has been approved on ${env.APP_NAME}.\n\n` +
       `Login email: ${app.contactEmail}\n` +
       `Temporary password: ${tempPassword}\n\n` +
       `Please log in and change your password on first sign-in.\n\n` +
-      `JazakAllahu khayran,\nHidaya Online`,
+      `JazakAllahu khayran,\n${env.APP_NAME}`,
   });
 
   return { academy: academy.toObject(), tempPasswordIssued: true };
